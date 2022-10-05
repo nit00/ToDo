@@ -13,7 +13,7 @@ const [newItem,setNewItem]=useState();
 const [view,setView]=useState([]);
 
 useEffect(()=>{
-    axios.get("http://localhost:4000/items")
+    axios.get("https://my-json-server.typicode.com/nit00/todo/db")
     .then((response)=>{
     setView(response.data);
     }).catch(err=>{
@@ -33,7 +33,7 @@ setItem({...item,"items":event.target.value})
     }
     const handlesubmit=(event)=>{
         event.preventDefault();
-        axios.post("http://localhost:4000/items",item)
+        axios.post("https://my-json-server.typicode.com/nit00/todo/db",item)
         .then(response=>{
             console.log(response.data)
         }).catch(err=>{
