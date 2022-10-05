@@ -1,71 +1,99 @@
-import React from 'react'
-import '../App.css';
-import {Form,Button} from 'react-bootstrap';
-import axios from 'axios'
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 
-const Home=()=>{
-const [newItem,setNewItem]=useState();
-    const [item,setItem]=useState({
-        "items":"",
-    });
-const [view,setView]=useState([]);
-
-useEffect(()=>{
-    axios.get("https://my-json-server.typicode.com/nit00/todo/items")
-    .then((response)=>{
-    setView(response.data);
-    }).catch(err=>{
-     console.log(err)
-    }) 
-})
-      
-const handleDelete=(id)=>{
-    axios.delete("http://localhost:4000/items/"+id)
-    .then(res=>{
-        console.log(res)
-    })
-}
-    const handleChange=(event)=>{
-    
-setItem({...item,"items":event.target.value})
-    }
-    const handlesubmit=(event)=>{
-        event.preventDefault();
-        axios.post("https://my-json-server.typicode.com/nit00/todo/items",item)
-        .then(response=>{
-            console.log(response.data)
-        }).catch(err=>{
-            console.log(err)
-        })
-    }
+function Task({ task, index, completeTask, removeTask }) {
     return (
-<>
-<div className="container">
-    
-        <Form onSubmit={handlesubmit}>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Item To Add</Form.Label>
-        <Form.Control value={newItem}  name="items" onChange={handleChange} type="text" placeholder="Add your item" />
-      </Form.Group>
-      <Button type='submit'>Add</Button>
-      </Form>
-     {view.map((el)=>{
-        return(
-            <>
-            <ul>
-                <li>{el.items}</li>
-                <button onClick={()=>{handleDelete(el.id);}}>Delete</button>
-            </ul>
-             
-            </>
-        )
-       
-     })}
-</div>
-</>
+        <div
+            className="task"
+            style={{ textDecoration: task.completed ? "line-through" : "" }}
+        >
+            {task.title}
+
+            <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
+            <button onClick={() => completeTask(index)}>Complete</button>
+
+        </div>
     );
 }
 
-export default Home;
+function CreateTask({ addTask }) {
+    const [value, setValue] = useState("");
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        if (!value) return;
+        addTask(value);
+        setValue("");
+    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                className="input"
+                value={value}
+                placeholder="Add a new task"
+                onChange={e => setValue(e.target.value)}
+            />
+        </form>
+    );
+}
+
+function Todo() {
+    const [tasksRemaining, setTasksRemaining] = useState(0);
+    const [tasks, setTasks] = useState([
+        {
+            title: "Grab some Pizza",
+            completed: true
+        },
+        {
+            title: "Do your workout",
+            completed: true
+        },
+        {
+            title: "Hangout with friends",
+            completed: false
+        }
+    ]);
+
+    useEffect(() => { setTasksRemaining(tasks.filter(task => !task.completed).length) });
+
+
+    const addTask = title => {
+        const newTasks = [...tasks, { title, completed: false }];
+        setTasks(newTasks);
+    };
+
+    const completeTask = index => {
+        const newTasks = [...tasks];
+        newTasks[index].completed = true;
+        setTasks(newTasks);
+    };
+
+    const removeTask = index => {
+        const newTasks = [...tasks];
+        newTasks.splice(index, 1);
+        setTasks(newTasks);
+    };
+
+    return (
+        <div className="todo-container">
+            <div className="header">Pending tasks ({tasksRemaining})</div>
+            <div className="tasks">
+                {tasks.map((task, index) => (
+                    <Task
+                    task={task}
+                    index={index}
+                    completeTask={completeTask}
+                    removeTask={removeTask}
+                    key={index}
+                    />
+                ))}
+            </div>
+            <div className="create-task" >
+                <CreateTask addTask={addTask} />
+            </div>
+        </div>
+    );
+}
+
+export default Todo;
