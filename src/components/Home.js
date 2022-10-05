@@ -9,8 +9,8 @@ function Task({ task, index, completeTask, removeTask }) {
         >
             {task.title}
 
-            <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
-            <button onClick={() => completeTask(index)}>Complete</button>
+            <button style={{ background: "red" }} onClick={() => removeTask(index)}>Remove</button>
+            <button onClick={() => completeTask(index)}>Done</button>
 
         </div>
     );
@@ -47,6 +47,7 @@ function Todo() {
     useEffect(() => { setTasksRemaining(tasks.filter(task => !task.completed).length) });
 
 
+
     const addTask = title => {
         const newTasks = [...tasks, { title, completed: false }];
         setTasks(newTasks);
@@ -57,7 +58,14 @@ function Todo() {
         newTasks[index].completed = true;
         setTasks(newTasks);
     };
-
+    const check=()=>{
+        alert("I billlueeee Chotu Babiee")
+        if (window.confirm("You Billuee???")==true)
+        alert("Okieeezzz");
+        else 
+        {alert("Okieezz not")
+    window.close();}
+    }
     const removeTask = index => {
         const newTasks = [...tasks];
         newTasks.splice(index, 1);
@@ -80,6 +88,9 @@ function Todo() {
             </div>
             <div className="create-task" >
                 <CreateTask addTask={addTask} />
+            </div>
+            <div>
+                <button onClick={check}>Click Me</button>
             </div>
         </div>
     );
